@@ -30,7 +30,7 @@ function LoaderDel() {
 
 
 
-  <Map center={waypoints[0]}  />
+  <Map center={waypoints[0]}  height={35} />
  
     </div>
   )

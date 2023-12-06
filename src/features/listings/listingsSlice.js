@@ -1,27 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getListingsAsync } from './listingsActions';
+import { getShipmentsAsync } from './listingsActions';
 
 const initialState = {
     isLoading: false,
     error: null,
-    listings:[]
+    shipments:[]
   
 };
 
 const listingsSlice = createSlice({
-    name: 'listings',
+    name: 'shipments',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getListingsAsync.pending, (state) => {
+            .addCase(getShipmentsAsync.pending, (state) => {
                 state.isLoading = 'true';
             })
-            .addCase(getListingsAsync.fulfilled, (state, { payload }) => {
+            .addCase(getShipmentsAsync.fulfilled, (state, { payload }) => {
                 state.isLoading = 'false';
-                state.listings = payload
+                state.shipments = payload
             })
-            .addCase(getListingsAsync.rejected, (state, { payload }) => {
+            .addCase(getShipmentsAsync.rejected, (state, { payload }) => {
                 state.isLoading = 'false';
                 state.error = payload;
             });

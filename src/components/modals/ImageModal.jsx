@@ -19,7 +19,7 @@ function ImageModal() {
 
  const { listingId } = imageModal;
 
- console.log(listingId)
+
     const onSubmit = async (data) => {
 
   setIsLoading(true);

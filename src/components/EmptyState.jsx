@@ -1,10 +1,12 @@
 import Button from "./Button";
 import Heading from "./Heading";
-
+import { AiOutlinePlus } from "react-icons/ai";
 function EmptyState({
   title = "No exact matches",
   subtitle = "Try changing or removing some of your filters.",
-  showReset
+  showReset,
+  label,
+   onClick,
 }) {
  
 
@@ -25,14 +27,16 @@ function EmptyState({
         title={title}
         subtitle={subtitle}
       />
-      <div className="w-48 mt-4">
-        {showReset && (
+      <div  className="w-48 mt-4">
+       
           <Button
             outline
-            label="Remove all filters"
+onClick={onClick}
+            label={label}
+              icon={AiOutlinePlus}
        
           />
-        )}
+      
       </div>
     </div>
     </>

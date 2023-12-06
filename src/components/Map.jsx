@@ -1,39 +1,60 @@
+import { useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { url } from "../utils/url";
 
-import { MapContainer, Marker, TileLayer } from 'react-leaflet'
-import 'leaflet/dist/leaflet.css';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { Icon } from 'leaflet';
+function Map({ senderLocation, receiverLocation, height }) {
+  const [map, setMap] = useState(null);
 
+  useEffect(() => {
+    const geocodeLocation = async () => {
+      try {
+        const response = await fetch(`${url}/geocode`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ senderLocation, receiverLocation }),
+        });
 
-delete Icon.Default.prototype._getIconUrl;
-Icon.Default.mergeOptions({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-});
+        const { senderCoordinates, receiverCoordinates } = await response.json();
 
+      const midpoint = [
+          (senderCoordinates[0] + receiverCoordinates[0]) / 2,
+          (senderCoordinates[1] + receiverCoordinates[1]) / 2,
+        ];
+        // Initialize the map
+        mapboxgl.accessToken = 'pk.eyJ1IjoibXVnZW4yNDciLCJhIjoiY2t6YXc1d3ZtMWp5cDJvczhtaHNzNng5ZiJ9.ChuFB5ls73656qlh1alvwA';
+        const initializedMap = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: midpoint, // Centered on Kenya
+          zoom:10,
+        });
 
-const url = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        // Add markers for sender and receiver
+        new mapboxgl.Marker({ color: 'blue' })
+          .setLngLat(senderCoordinates)
+          .addTo(initializedMap);
 
-function Map({ center }) {
- 
+        new mapboxgl.Marker({ color: 'red' })
+          .setLngLat(receiverCoordinates)
+          .addTo(initializedMap);
 
-  return (
-    <>
-    <MapContainer
-      center={center ?? [51, -0.09]}
-      zoom={center ? 4 : 2}
-      scrollWheelZoom={false}
-      className="h-[35vh] rounded-lg"
-    >
-      <TileLayer url={url} attribution={attribution} />
-      {center && <Marker position={center} />}
-    </MapContainer>
-    </>
-  )
+        setMap(initializedMap);
+
+        return () => {
+          initializedMap.remove(); // Cleanup when component unmounts
+        };
+      } catch (error) {
+        console.error('Error geocoding location:', error);
+      }
+    };
+
+    geocodeLocation();
+  }, [senderLocation, receiverLocation]);
+
+  return <div id="map" style={{ height: `${height}vh` }} />;
 }
 
-export default Map
+export default Map;

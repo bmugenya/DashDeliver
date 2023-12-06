@@ -6,34 +6,91 @@ import json
 
 listings = Blueprint('listings', __name__)
 
-@listings.route('/listings', methods=['POST'])
-def listing():
+
+from flask import request, jsonify
+
+@listings.route('/geocode', methods=['POST'])
+def geocode():
+
+
+    
+    try:
+        # Get the sender and receiver locations from the request
+        sender_location = request.json['senderLocation']
+        receiver_location = request.json['receiverLocation']
+        print(sender_location)
+
+        # Make requests to Mapbox Geocoding API for sender and receiver locations
+        sender_coordinates = get_coordinates(sender_location)
+        receiver_coordinates = get_coordinates(receiver_location)
+
+        return jsonify({
+            'senderCoordinates': sender_coordinates,
+            'receiverCoordinates': receiver_coordinates
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def get_coordinates(location):
+    try:
+        # Make a request to Mapbox Geocoding API
+        mapbox_access_token = 'pk.eyJ1IjoibXVnZW4yNDciLCJhIjoiY2t6YXc1d3ZtMWp5cDJvczhtaHNzNng5ZiJ9.ChuFB5ls73656qlh1alvwA'
+        mapbox_url = f'https://api.mapbox.com/geocoding/v5/mapbox.places/{location}.json?access_token={mapbox_access_token}'
+        response = requests.get(mapbox_url)
+        data = response.json()
+
+        # Extract coordinates
+        coordinates = data['features'][0]['center']
+        return coordinates
+
+    except Exception as e:
+        return None  # Handle the case where coordinates cannot be obtained
+
+@listings.route('/shipment', methods=['POST'])
+def shipment():
     data = request.get_json()
-    print(data)
+   
     if not data:
         return jsonify({'msg': 'Missing JSON'}), 400
 
-    location_value_json = json.dumps(data.get('location_value'))
-    data['location_value'] = location_value_json
+    try:
+        sender_county_dict = data.get('sender_county', {})
+        reciever_country_dict = data.get('reciever_country', {})
 
-    amenity_json = json.dumps(data.get('amenity'))
-    data['amenity'] = amenity_json
+        # Extract the 'label' from sender_county and reciever_country
+        sender_county_label = sender_county_dict.get('label', '')
+        reciever_country_label = reciever_country_dict.get('label', '')
 
-    print(data['amenity'])
+        # Save the labels to different fields in the data dictionary
+        data['sender_county'] = sender_county_label
+        data['reciever_country'] = reciever_country_label
 
-    listing = Listing(**data)
-    db.session.add(listing)
-    db.session.commit()
+        print(data)
 
-    db.session.commit()
+        listing = Shipment(**data)
+        db.session.add(listing)
+        db.session.commit()
+
+        db.session.commit()
+
+        return jsonify({'msg': 'Data received successfully'}), 200
+
+    except Exception as e:
+        print(f'Error processing data: {e}')
+        return abort(500, 'Internal Server Error')
+
+    
+
+
 
     return jsonify({'message': 'Listing created successfully'})
  
 
 
-@listings.route('/listings', methods=['GET'])
-def get_listing():
-    listings = Listing.query.all()
+@listings.route('/shipments/<int:user_id>', methods=['GET'])
+def get_shipments(user_id):
+    listings = Shipment.query.filter_by(user_id=user_id).all()
     if listings:
 
         serialized_listings = [listing.serialize() for listing in listings]
@@ -43,14 +100,15 @@ def get_listing():
         return jsonify({'message': 'No listings available'}), 404
 
 
-@listings.route('/listing/<int:id>', methods=['GET'])
+
+@listings.route('/shipment/<int:id>', methods=['GET'])
 def get_single_listing(id):
-    listing = Listing.query.filter_by(id=id).first()
+    listing = Shipment.query.filter_by(id=id).first()
     if listing:
         listing_data = listing.serialize()
-        images = Image.query.filter_by(listing_id=listing.id).all()
-        listing_data['images'] = [image.serialize() for image in images]
         print(listing_data)
+
+       
         return jsonify(listing_data), 200
     else:
         return jsonify({'message': 'No listings available'}), 404

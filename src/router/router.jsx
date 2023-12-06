@@ -1,20 +1,26 @@
 import {  useEffect } from "react";
 import Navbar from  '../components/navbar/Navbar'
+import Admin from  '../components/navbar/Admin'
 import Footer from  '../components/navbar/Footer'
 import Categories from  '../components/navbar/Categories'
 import LoginModal from  '../components/modals/LoginModal'
 import RegisterModal from '../components/modals/RegisterModal';
+import AssignModal from '../components/modals/AssignModal';
+import { getDriversAsync } from "../features/favorites/favoritesActions";
 import RentModal from '../components/modals/RentModal';
+import DriverModal from '../components/modals/DriverModal';
 import ToasterProvider from '../providers/ToasterProvider';
-import Listing from "../components/Listing";
+
 import SearchModal from '../components/modals/SearchModal';
 import ImageModal from '../components/modals/ImageModal';
 import ListingPage from "../pages/listing";
 import HomePage from "../pages/home";
+import AdminHomePage from "../pages/admin/HomePage";
+import DriversPage from "../pages/DriversPage";
 import TrackPage from "../pages/Track";
 import TripsPage from "../pages/trips";
-import ParcelPage from "../pages/ParcelPage";
-import FavoritePage from "../pages/favorite";
+
+import OrdersPage from "../pages/OrdersPage";
 import AboutPage from "../pages/about";
 import LoaderDel from "../components/LoaderDel";
 import { BrowserRouter, Routes, Route,useNavigate } from 'react-router-dom'
@@ -22,7 +28,7 @@ import { BrowserRouter, Routes, Route,useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { getCurrentUserAsync } from '../features/user/userActions'
 import useAuthListener from '../hooks/use-auth-listener'
-import { getListingsAsync } from "../features/listings/listingsActions";
+import { getShipmentsAsync } from "../features/listings/listingsActions";
 
 
 
@@ -30,15 +36,19 @@ import { getListingsAsync } from "../features/listings/listingsActions";
 function Router() {
 
 const { user } = useAuthListener()
-console.log(user)
+
 
 const dispatch = useDispatch();
-const { listings,isLoading } = useSelector((state) => state.listings)
+const { shipments,isLoading } = useSelector((state) => state.shipments)
+const { drivers } = useSelector((state) => state.drivers)
+
 
   useEffect(() => {
-    dispatch(getListingsAsync())
+    
     if (user?.user_id) {
       dispatch(getCurrentUserAsync(user.user_id));
+      dispatch(getShipmentsAsync(user.user_id))
+      dispatch(getDriversAsync())
     }
   }, [dispatch, user]);
 
@@ -51,20 +61,25 @@ const { listings,isLoading } = useSelector((state) => state.listings)
     <LoginModal />
       <RegisterModal />
         <RentModal />
+        <AssignModal/>
+          <DriverModal />
            <ImageModal />
          <SearchModal />
-   <Navbar/>
+
    <div className="pb-20">
       <Routes>
-      <Route path='/' element={<HomePage listings={listings} isLoading={isLoading}/>} />
-      <Route path='/ship' element={ <Listing listings={listings} isLoading={isLoading} /> } />
-       <Route path='/listing/:id' element={<ListingPage />} />
-       <Route path='/trips' element={<TripsPage />} />
-       <Route path='/favorites' element={<FavoritePage />} />
-       <Route path='/track' element={<TrackPage />}  />
-       <Route path='/loader' element={<LoaderDel />}  />
-        <Route path='/about' element={<AboutPage />} />
-        <Route path='/parcel' element={<ParcelPage />} />
+      <Route path='/' element={ <><Navbar/><HomePage listings={shipments} isLoading={isLoading}/> </>} />
+
+       <Route path='/listing/:id' element={ <><Navbar/><ListingPage /> </>} />
+       <Route path='/trips' element={ <><Navbar/><TripsPage /> </>} />
+         <Route path='/dispatch/:id' element={ <><Navbar/><AdminHomePage drivers={drivers} /> </>} />
+           
+            <Route path='/drivers' element={ <><Navbar/><DriversPage drivers={drivers}/> </>} />
+       <Route path='/orders' element={<><Navbar/><OrdersPage parcel={shipments} /> </>} />
+       <Route path='/track' element={ <><Navbar/><TrackPage /> </>}  />
+       <Route path='/loader' element={ <><Navbar/><LoaderDel /> </>}  />
+        <Route path='/about' element={ <><Navbar/><AboutPage /> </>} />
+
         </Routes>
         </div>
           <Footer/>

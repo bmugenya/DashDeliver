@@ -10,6 +10,7 @@ function CountrySelect({
   return (
     <div>
       <Select
+
         placeholder="Anywhere"
         isClearable
         options={getAll()}
@@ -25,21 +26,7 @@ function CountrySelect({
           </div>
         )}
         classNamePrefix="react-select"
-        className={{
-          control: (provided) => ({
-            ...provided,
-            padding: '0.75rem',
-            borderWidth: '2px',
-          }),
-          input: (provided) => ({
-            ...provided,
-            fontSize: '1.25rem',
-          }),
-          option: (provided) => ({
-            ...provided,
-            fontSize: '1.25rem',
-          }),
-        }}
+className=" border border-gray-300 text-gray-900 text-sm rounded-lg  block w-full p-2.5 "
         theme={(theme) => ({
           ...theme,
           borderRadius: 6,
@@ -49,6 +36,7 @@ function CountrySelect({
             primary25: '#ffe4e6',
           },
         })}
+        menuPlacement="bottom" 
       />
     </div>
     

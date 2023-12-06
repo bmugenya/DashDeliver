@@ -1,30 +1,47 @@
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { BiSolidChevronDown } from 'react-icons/bi';
+import Container from "../Container";
+import UserMenu from "./UserMenu";
+import { useSelector } from 'react-redux'
 
-function Logo() {
+
+function Admin() {
  let navigate = useNavigate();
    const [isOpen, setIsOpen] = useState(false);
-    
+    const { currentUser } = useSelector((state) => state.currentUser)
      const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
 
   return (
-   <>
-         <div className="flex flex-row items-center gap-3">
+    <>
+    <div className="fixed w-full bg-white z-10 shadow-sm">
+      <div
+        className="
+          py-4 
+          border-b-[1px]
+        "
+      >
+      <Container>
+        <div 
+          className="
+            flex 
+            flex-row 
+            items-center 
+            justify-between
+            gap-3
+            md:gap-0
+          "
+        >
+     
 
-             <img
-      onClick={() => navigate('/')}
-      className="hidden md:block cursor-pointer" 
-      src="/images/das.png" 
-      height="100" 
-      width="100" 
-      alt="DashDelivery" 
-    />
+  <div className="flex flex-row items-center gap-3">
+
+     
 
             <div 
-         onClick={() => navigate('/')}
+         onClick={() => navigate('/dispatch')}
           className="
             hidden
             md:block
@@ -38,10 +55,10 @@ function Logo() {
             cursor-pointer
           "
         >
-          Home 
+          Dispatch 
         </div>
         <div 
-         onClick={() => navigate('/track')}
+         onClick={() => navigate('/orders')}
           className="
             hidden
             md:block
@@ -55,7 +72,34 @@ function Logo() {
             cursor-pointer
           "
         >
-          Track
+          Orders
+        </div>
+
+
+
+
+
+
+
+    <div 
+         onClick={() => navigate('/drivers')}
+          className="
+            hidden
+            md:block
+            text-sm 
+            font-semibold 
+            flex-row
+          
+            rounded-full 
+            hover:bg-neutral-100 
+            transition 
+            cursor-pointer
+          "
+        >
+          Drivers
+
+
+
         </div>
 
 
@@ -77,11 +121,32 @@ function Logo() {
             cursor-pointer
           "
         >
-          About
+          Map
         </div>
    </div>
+
+
+
+
+
+
+
+
+
+
+
+ 
+        
+          <UserMenu currentUser={currentUser}/>
+        </div>
+      </Container>
+      
+
+    </div>
+  
+  </div>
     </>
   )
 }
 
-export default Logo
+export default Admin

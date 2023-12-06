@@ -1,11 +1,11 @@
-import countries from 'world-countries';
+import kenyanCounties from '../utils/kenyan-counties';
 
-const formattedCountries = countries.map((country) => ({
-  value: country.cca2,
-  label: country.name.common,
-  flag: country.flag,
-  latlng: country.latlng,
-  region: country.region,
+const formattedCountries = kenyanCounties.map((county) => ({
+  value: county.code,
+  label: county.name,
+  flag: county.flag,
+  latlng: county.latlng,
+  region: county.region,
 }));
 
 const useCountries = () => {

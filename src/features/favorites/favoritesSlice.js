@@ -1,27 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getFavoritesAsync } from './favoritesActions';
+import { getDriversAsync } from './favoritesActions';
 
 const initialState = {
     isLoading: false,
     error: null,
-    favorites:[]
+    drivers:[]
   
 };
 
 const favoritesSlice = createSlice({
-    name: 'favorites',
+    name: 'drivers',
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getFavoritesAsync.pending, (state) => {
+            .addCase(getDriversAsync.pending, (state) => {
                 state.isLoading = 'true';
             })
-            .addCase(getFavoritesAsync.fulfilled, (state, { payload }) => {
+            .addCase(getDriversAsync.fulfilled, (state, { payload }) => {
                 state.isLoading = 'false';
-                state.favorites = payload
+                state.drivers = payload
             })
-            .addCase(getFavoritesAsync.rejected, (state, { payload }) => {
+            .addCase(getDriversAsync.rejected, (state, { payload }) => {
                 state.isLoading = 'false';
                 state.error = payload;
             });

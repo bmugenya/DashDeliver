@@ -32,22 +32,27 @@ const registerModal = useRegisterModal();
     },
   });
 
-    const onSubmit = async (data) => {
-    setIsLoading(true);
+const onSubmit = async (data) => {
+  setIsLoading(true);
 
-    axios.post(`${url}/register`, data)
-    .then(() => {
-      toast.success('Registered!');
-      registerModal.onClose();
-      loginModal.onOpen();
-    })
-    .catch((error) => {
-      toast.error(error);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    })
+  try {
+    await axios.post(`${url}/register`, data);
+    toast.success('Registered successfully!');
+    registerModal.onClose();
+    loginModal.onOpen();
+  } catch (error) {
+    if (error.response) {
+      // The request was made, but the server responded with an error
+      toast.error(error.response.data.message);
+    } else {
+      // Something happened in setting up the request that triggered an error
+      console.error('Error:', error.message);
+      toast.error('An unexpected error occurred');
+    }
+  } finally {
+    setIsLoading(false);
   }
+};
 
   const onToggle = useCallback(() => {
     registerModal.onClose();

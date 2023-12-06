@@ -9,6 +9,7 @@ import MenuItem from "./MenuItem";
 import { useNavigate } from "react-router-dom";
 
 function UserMenu({currentUser}) {
+  
  
   const loginModal = useLoginModal();
 const registerModal = useRegisterModal();
@@ -37,7 +38,7 @@ const registerModal = useRegisterModal();
  <div className="relative">
       <div className="flex flex-row items-center gap-3">
         <div 
-         onClick={() => navigate('/listings')}
+         onClick={() => navigate('/')}
           className="
             hidden
             md:block
@@ -95,22 +96,26 @@ const registerModal = useRegisterModal();
           <div className="flex flex-col cursor-pointer">
             {currentUser ? (
               <>
-                <MenuItem 
-                  label="My trips" 
-                   onClick={() => navigate('/trips')}
-                />
-                <MenuItem 
-                  label="My favorites" 
-                   onClick={() => navigate('/favorites')}
+        
+
+     <MenuItem 
+                  label="Orders" 
+                   onClick={() => navigate('/orders')}
                 />
 
-                <MenuItem 
-                  label="My properties" 
-                  onClick={() => navigate('/properties')}
+
+
+     <MenuItem 
+                  label="Drivers" 
+                   onClick={() => navigate('/drivers')}
                 />
+
+
+ 
+        
   
                 <MenuItem 
-                  label="Add a new Listing" 
+                  label="Add a new Order" 
                   onClick={rentModal.onOpen}
                 />
                 <hr />

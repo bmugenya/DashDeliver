@@ -2,11 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { getListings } from './listingsApi'
 
 
-export const getListingsAsync = createAsyncThunk(
+export const getShipmentsAsync = createAsyncThunk(
     '/listing',
-    async () => {
+    async (user_id) => {
         try {
-            const response = await getListings();
+            const response = await getListings(user_id);
+     
           
             return response;
         } catch(error) {

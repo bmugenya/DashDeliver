@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { getFavorites } from './favoritesApi'
+import { getDrivers } from './favoritesApi'
 
 
-export const getFavoritesAsync = createAsyncThunk(
-    '/favorite',
-    async (user_id) => {
+export const getDriversAsync = createAsyncThunk(
+    '/drivers',
+    async () => {
         try {
-            const response = await getFavorites(user_id);
+            const response = await getDrivers();
           
             return response;
         } catch(error) {
