@@ -16,14 +16,18 @@ class User(db.Model,Updateable):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     email = db.Column(db.String, unique=True)
+    mobile = db.Column(db.String)
     email_verified = db.Column(db.DateTime)
+    user_role = db.Column(db.String)
     password_hash = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, onupdate=datetime.now)
     favorite_ids = db.Column(db.String)
+    status = db.Column(db.String(20), default='Available')
 
     accounts = db.relationship('Account', back_populates='user')
     listings = db.relationship('Listing', back_populates='user')
+    shipments = db.relationship('Shipment', back_populates='user')
     reservations = db.relationship('Reservation', back_populates='user')
 
     @property
@@ -53,6 +57,9 @@ class User(db.Model,Updateable):
         return {
             'id': self.id,
             'name': self.name,
+            'status': self.status,
+            'user_role': self.user_role,
+            'mobile': self.mobile,
             'email': self.email,
             'email_verified':self.email_verified,
             'created_at':self.created_at,
@@ -193,6 +200,88 @@ class Reservation(db.Model,Updateable):
             'created_at':self.created_at,
             'listings': self.listings.serialize() if self.listings else None
 
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+class Shipment(db.Model,Updateable):
+    __tablename__ = 'shipments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_name = db.Column(db.String)
+    sender_contact = db.Column(db.String)
+    pickup_time =  db.Column(db.String)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    sender_county = db.Column(db.String, nullable=False)
+    sender_province = db.Column(db.String, nullable=False)
+    pickup_address = db.Column(db.String)
+    details = db.Column(db.String)
+    reciever_ward = db.Column(db.String, nullable=False)
+    sender_ward = db.Column(db.String, nullable=False)
+
+    reciever_name = db.Column(db.String)
+    reciever_contact = db.Column(db.String)
+    reciever_email = db.Column(db.String)
+    reciever_country =  db.Column(db.String, nullable=False)
+    reciever_province =  db.Column(db.String, nullable=False)
+    drop_address = db.Column(db.String)
+    status = db.Column(db.String(20), default='To be Picked-up')  # Possible statuses: 'Pending', 'In Progress', 'Delivered', etc.
+    
+
+    parcel = db.Column(db.String)
+    quantity = db.Column(db.String)
+    weight = db.Column(db.String)
+
+
+    driver_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', back_populates='shipments')
+
+    
+    def assign_driver(self, driver):
+        self.driver = driver
+        self.status = 'In Progress'
+
+
+
+
+    def __repr__(self):
+        return '<Shipment {}>'.format(self.package)
+
+    @property
+    def url(self):
+        return url_for('shipments.get', id=self.id)
+
+
+    def serialize(self):
+        return {
+            'id':self.id,
+            'sender_name': self.sender_name,
+            'status': self.status,
+            'sender_contact': self.sender_contact,
+            'pickup_time': self.pickup_time,
+            'parcel':self.parcel,
+            'created_at':self.created_at,
+            'sender_county':self.sender_county,
+            'sender_province':self.sender_province,
+            'reciever_province':self.reciever_province,
+            'reciever_ward':self.reciever_ward,
+            'sender_ward':self.sender_ward,
+            'pickup_address':self.pickup_address,
+            'reciever_name':self.reciever_name,
+            'reciever_contact':self.reciever_contact,
+            'reciever_email':self.reciever_email,
+            'reciever_country':self.reciever_country,
+            'user': self.user.serialize() if self.user else None 
 
         }
 
