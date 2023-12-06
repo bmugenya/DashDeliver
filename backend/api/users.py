@@ -2,7 +2,7 @@ from flask import request, url_for,jsonify,json,Blueprint,render_template
 from flask_mail import Message
 import os
 import requests
-from api import db,mail
+from api.app import db,mail
 from werkzeug.security import check_password_hash
 from api.models import *
 from api.auth import create_auth_token
