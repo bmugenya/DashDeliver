@@ -8,16 +8,21 @@ import Input from "../inputs/Input";
 import Heading from "../Heading";
 import Button from "../Button";
 import { useDispatch, useSelector } from 'react-redux'
-
+import { getDriversAsync } from "../../features/favorites/favoritesActions";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useForm } from 'react-hook-form'
 
+
 function DriverModal() {
 const driverModal = useDriverModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
+  const { drivers } = useSelector((state) => state.drivers)
+const dispatch = useDispatch();
+
+
  const {
         register, 
         handleSubmit,  
@@ -38,8 +43,9 @@ const driverModal = useDriverModal();
 
     axios.post(`${url}/register`, data)
     .then(() => {
-      toast.success('Registered!');
-      console.log(data)
+      toast.success('Driver Registered!');
+
+     
       driverModal.onClose();
      
     })
@@ -47,6 +53,7 @@ const driverModal = useDriverModal();
       toast.error('error!');
     })
     .finally(() => {
+      dispatch(getDriversAsync())
       setIsLoading(false);
     })
   }

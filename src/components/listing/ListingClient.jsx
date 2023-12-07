@@ -6,7 +6,7 @@ import ListingHead from "./ListingHead";
 import ListingInfo from "./ListingInfo";
 import Container from '../Container';
 import { categories } from "../navbar/Categories";
-import { amenities } from "../../utils/amenities"
+
 
 import ListingReservation from "./ListingReservation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -58,17 +58,6 @@ console.log(listing)
       items.label === listing.category);
   }, [listing.category]);
 
-const amenity = useMemo(() => {
-  if (listing && listing.amenity && typeof listing.amenity === 'string') {
-    const amenityArray = JSON.parse(listing.amenity);
-    if (Array.isArray(amenityArray)) {
-      return amenityArray.map((item) => {
-        return amenities.find((amenity) => amenity.label === item);
-      });
-    }
-  }
-  return [];
-}, [listing, amenities]);
 
 
   const onCreateReservation = useCallback(() => {

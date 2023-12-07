@@ -3,7 +3,7 @@ import { categories } from '../components/navbar/Categories';
 import Button from "../components/Button";
 import ListingCard from "../components/listing/ListingCard";
 import { useDispatch, useSelector } from 'react-redux'
-import { amenities } from "../utils/amenities"
+
 import Loader from "../components/Loader"
 import Search from "../components/navbar/Search";
 import Mark from "../components/Mark";

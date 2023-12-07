@@ -7,7 +7,7 @@ import { authUserAsync } from '../../features/user/userActions'
 import { useForm } from 'react-hook-form'
 import { toast } from "react-hot-toast";
 import { useCallback, useMemo } from "react";
-
+import { getCurrentUserAsync } from '../../features/user/userActions'
 import Modal from "./Modal";
 import Input from "../inputs/Input";
 import Heading from "../Heading";
@@ -26,9 +26,11 @@ function LoginModal() {
     const onSubmit = async (data) => {
     const auth = await dispatch(authUserAsync(data))
     const error = auth?.error?.message
+   
     
     if(!error){
       toast.success('Logged in');
+        dispatch(getCurrentUserAsync(auth?.payload?.user));
       loginModal.onClose();
 
     }else{

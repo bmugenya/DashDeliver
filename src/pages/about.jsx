@@ -18,9 +18,14 @@ function ABoutPage() {
           src='/images/question.jpg'
         placeholder='blur'
    
-        fill
-        className='w-full h-full object-center object-cover rounded-3xl -z-10'
-        sizes='100vw'
+      
+       
+          className=" object-cover 
+              h-full 
+              w-full 
+              group-hover:scale-110 
+              transition"
+        sizes='85vw'
         priority
         />
 

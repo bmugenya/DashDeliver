@@ -3,12 +3,22 @@ import FavoriteClient from "../components/listing/FavoritesClient";
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import EmptyState from "../components/EmptyState";
+import useLoginModal from "../hooks/useLoginModal";
+import useRentModal from "../hooks/useRentModal";
+import { useCallback, useState } from "react";
+
 
 function OrdersPage({parcel}) {
 
 const dispatch = useDispatch();
  const navigate = useNavigate();
 const { currentUser } = useSelector((state) => state.currentUser)
+
+
+  const rentModal = useRentModal();
+
+
+
 
   const handleRowClick = (id) => {
     // Assuming you have a route like "/details/:id"
@@ -23,6 +33,7 @@ const { currentUser } = useSelector((state) => state.currentUser)
           title="No Orders found"
           subtitle="Looks like you have no orders yet."
           label="New Order"
+          onClick={rentModal.onOpen}
         />
     );
   }

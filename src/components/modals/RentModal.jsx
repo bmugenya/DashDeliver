@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useMemo, useState } from "react";
 import { categories } from '../navbar/Categories';
-import { amenities } from "../../utils/amenities"
+
 import Select from 'react-select';
 import useRentModal from '../../hooks/useRentModal';
 import Map from "../Map"

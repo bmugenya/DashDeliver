@@ -3,7 +3,7 @@ import { categories } from '../../components/navbar/Categories';
 import { useNavigate } from "react-router-dom";
 import ListingCard from "../../components/listing/ListingCard";
 import { useDispatch, useSelector } from 'react-redux'
-import { amenities } from "../../utils/amenities"
+
 import Loader from "../../components/Loader"
 import AssignModal from "../../components/modals/AssignModal"
 import Search from "../../components/navbar/Search";

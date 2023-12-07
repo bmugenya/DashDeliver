@@ -41,7 +41,7 @@ def register():
 
     email_html = render_template('mail.html', institute_name=name, registered_email=registered_email, password=password)
 
-    msg = Message("Welcome to DashDeliver", sender=os.getenv('MAIL_USERNAME'), recipients=[registered_email])
+    msg = Message("Welcome to Provision Errands", sender=os.getenv('MAIL_USERNAME'), recipients=[registered_email])
     msg.html = email_html
     mail.send(msg)
 
