@@ -14,7 +14,7 @@ import Input from "../inputs/Input";
 import Counter from "../inputs/Counter";
 import CountrySelect from "../inputs/CountrySelect";
 import ImageUpload from '../inputs/ImageUpload';
-
+import { getShipmentsAsync } from ".././features/listings/listingsActions";
 import Heading from "../Heading";
 import Button from "../Button";
 import CategoryInput from '../inputs/CategoryInput';
@@ -37,7 +37,7 @@ function RentModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(STEPS.CATEGORY);
   const { currentUser } = useSelector((state) => state.currentUser);
-
+const dispatch = useDispatch();
  const [subCounties, setSubCounties] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedProvince, setSelectedProvince] = useState(null);
@@ -146,6 +146,7 @@ const handleRCountryChange = (value) => {
         toast.error('Something went wrong.');
       })
       .finally(() => {
+         dispatch(getShipmentsAsync(data.user_id))
         setIsLoading(false);
       })
   }
