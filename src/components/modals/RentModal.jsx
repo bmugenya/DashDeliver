@@ -10,16 +10,16 @@ import { url } from "../../utils/url"
 import subCountiesData from '../../utils/sub_counties.json'; 
 import Modal from "./Modal";
 import Input from "../inputs/Input";
-
+import { useDispatch, useSelector } from 'react-redux'
 import Counter from "../inputs/Counter";
 import CountrySelect from "../inputs/CountrySelect";
 import ImageUpload from '../inputs/ImageUpload';
-import { getShipmentsAsync } from ".././features/listings/listingsActions";
+import { getShipmentsAsync } from "../../features/listings/listingsActions";
 import Heading from "../Heading";
 import Button from "../Button";
 import CategoryInput from '../inputs/CategoryInput';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux'
+
 
 const STEPS = {
   CATEGORY: 0,
