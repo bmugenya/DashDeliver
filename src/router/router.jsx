@@ -18,7 +18,7 @@ import HomePage from "../pages/home";
 import AdminHomePage from "../pages/admin/HomePage";
 import DriversPage from "../pages/DriversPage";
 import TrackPage from "../pages/Track";
-import TripsPage from "../pages/trips";
+
 
 import OrdersPage from "../pages/OrdersPage";
 import AboutPage from "../pages/about";
@@ -71,7 +71,7 @@ const { drivers } = useSelector((state) => state.drivers)
       <Route path='/' element={ <><Navbar/><HomePage listings={shipments} isLoading={isLoading}/> </>} />
 
        <Route path='/listing/:id' element={ <><Navbar/><ListingPage /> </>} />
-       <Route path='/trips' element={ <><Navbar/><TripsPage /> </>} />
+   
          <Route path='/dispatch/:id' element={ <><Navbar/><AdminHomePage drivers={drivers} /> </>} />
            
             <Route path='/drivers' element={ <><Navbar/><DriversPage drivers={drivers}/> </>} />
