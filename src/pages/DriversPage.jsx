@@ -63,28 +63,28 @@ const { currentUser } = useSelector((state) => state.currentUser)
           </div>
 
 
-<div class="bg-white mt-4 shadow-md rounded-lg overflow-hidden">
+<div className="bg-white mt-4 shadow-md rounded-lg overflow-hidden">
 
-<div class="relative overflow-x-auto">
+<div className="relative overflow-x-auto">
 
 
-    <table class="w-full text-sm text-left   dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
+    <table className="w-full text-sm text-left   dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
             <tr>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                    Name
                      </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Phone
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                    Email
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                   Vehicle
                 </th>
 
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" className="px-6 py-3">
                    Status
                 </th>
 
@@ -93,20 +93,20 @@ const { currentUser } = useSelector((state) => state.currentUser)
         </thead>
         <tbody>
     {drivers?.map((row) => (
-            <tr class="bg-white border-b ">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
+            <tr className="bg-white border-b ">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                     {row.name}
                 </th>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                       {row.mobile}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                    {row.email}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     <BiCar />
                 </td>
-                      <td class="px-6 py-4">
+                      <td className="px-6 py-4">
                    {row.status}
                 </td>
        
