@@ -8,7 +8,7 @@ import Input from "../inputs/Input";
 import Heading from "../Heading";
 import Button from "../Button";
 import { useDispatch, useSelector } from 'react-redux'
-import { getDriversAsync } from "../../features/favorites/favoritesActions";
+import { getDriversAsync } from "../../features/driver/driverActions";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useState } from "react";
 import { toast } from "react-hot-toast";

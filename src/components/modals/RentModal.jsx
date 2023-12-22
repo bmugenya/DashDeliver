@@ -22,9 +22,10 @@ import { useForm } from 'react-hook-form';
 
 
 const STEPS = {
-  CATEGORY: 0,
+  CATEGORY: 1,
 
-  PARCEL: 1,
+  PARCEL: 0,
+  loading:2,
   
  
 
@@ -35,7 +36,7 @@ function RentModal() {
  
   const rentModal = useRentModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [step, setStep] = useState(STEPS.CATEGORY);
+  const [step, setStep] = useState(STEPS.PARCEL);
   const { currentUser } = useSelector((state) => state.currentUser);
 const dispatch = useDispatch();
  const [subCounties, setSubCounties] = useState([]);
@@ -54,6 +55,21 @@ const [selectedRCounty, setRSelectedCounty] = useState(null);
 const [selectedRConstituency, setRSelectedConstituency] = useState(null);
 const [selectedRWard, setRSelectedWard] = useState(null);
 
+
+
+
+
+
+
+
+
+const [senderLocation, setSenderLocation] = useState(null);
+const [recieverLocation, setRecieverLocation] = useState(null);
+
+
+
+const [senderCordinates, setSenderCordinates] = useState(null);
+const [recieverCordinates, setRecieverCordinates] = useState(null);
 
 const handleCountryChange = (value) => {
   setCustomValue('sender_county', value);
@@ -99,12 +115,41 @@ const handleRCountryChange = (value) => {
     setStep((value) => value - 1);
   }
 
-  const onNext = () => {
-    setStep((value) => value + 1);
+const onNext = async () => {
+  if (step === STEPS.PARCEL) {
+
+     setSenderLocation(`Kenya,${sender_county.label},${selectedConstituency?.value},${selectedWard?.value}`)
+    setRecieverLocation(`Kenya,${selectedRCounty.label},${selectedRConstituency?.value},${selectedRWard?.value}`)
+
+
+    try {
+      const response = await fetch(`${url}/geocode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderLocation: senderLocation,
+          receiverLocation: recieverLocation
+        }),
+      });
+
+      // Handle the response as needed
+      const data = await response.json();
+      setSenderCordinates(data.senderCoordinates)
+      setRecieverCordinates(data.receiverCoordinates)
+
+    } catch (error) {
+      console.error('Error fetching geocode:', error);
+      // Handle errors
+    }
   }
 
+  setStep((value) => value + 1);
+};
+
   const actionLabel = useMemo(() => {
-    if (step === STEPS.PARCEL) {
+    if (step === STEPS.loading) {
       return 'Create'
     }
 
@@ -112,7 +157,7 @@ const handleRCountryChange = (value) => {
   }, [step]);
 
   const secondaryActionLabel = useMemo(() => {
-    if (step === STEPS.CATEGORY) {
+    if (step === STEPS.PARCEL) {
       return undefined
     }
 
@@ -121,25 +166,25 @@ const handleRCountryChange = (value) => {
 
 
  const onSubmit = async (data) => {
-    if (step !== STEPS.PARCEL) {
+    if (step !== STEPS.loading) {
       return onNext();
     }
     // setIsLoading(true);
-    setCustomValue('sender_province', selectedConstituency?.value);
-      setCustomValue('reciever_province', selectedRConstituency?.value);
+    setCustomValue('sender_location', senderLocation);
+      setCustomValue('sender_coordinates', senderCordinates);
 
-      setCustomValue('sender_ward', selectedWard?.value);
-      setCustomValue('reciever_ward', selectedRWard?.value);
+      setCustomValue('reciever_location', recieverLocation);
+      setCustomValue('reciever_coordinates', recieverCordinates);
 
 
 
     console.log('data', data);
-    // navigate('/loader')
+  
 
     axios.post(`${url}/shipment`, data)
       .then(() => {
         toast.success('Shipment created!');
-        // setStep(STEPS.CATEGORY);
+        setStep(STEPS.CATEGORY);
         // rentModal.onClose();
       })
       .catch(() => {
@@ -168,18 +213,22 @@ const handleRCountryChange = (value) => {
       sender_name: '',
       sender_contact: '',
       pickup_time: '',
-      sender_county: null,
-      sender_province: '',
+
        pickup_address: '',
       details:[],
       parcel:'',
-      sender_ward: '',
-      reciever_ward: '',
+
+      sender_location: '',
+      reciever_location: '',
+
+      sender_coordinates: '',
+      reciever_coordinates: '',
+
+
       reciever_name: '',
       reciever_contact: '',
       reciever_email: '',
-      reciever_country: '',
-      reciever_province: '',
+
       drop_address:'',
        quantity:'',
         weight:'',
@@ -213,6 +262,21 @@ const handleRCountryChange = (value) => {
   };
 
 
+  const sender_location = watch('sender_location');
+  const reciever_location = watch('reciever_location');
+  const sender_coordinates = watch('sender_coordinates');
+  const reciever_coordinates = watch('reciever_coordinates');
+
+
+
+
+
+
+
+
+
+
+
 
   const sender_name = watch('sender_name');
   const sender_contact = watch('sender_contact');
@@ -233,59 +297,28 @@ const handleRCountryChange = (value) => {
   const quantity = watch('quantity');
   const size = watch('size');
 
-   let bodyContent = (
-    <div className="flex flex-col gap-8">
+
+
+
+
+
+  let  bodyContent = (
+    <div className="flex flex-col gap-1">
       <Heading
-        title="Ship"
-        subtitle="To Help You More Accurately, Please Answer the Following Questions."
+        title="Information Of Sending"
+        subtitle="Pick-up From"
       />
-      <div 
-        className="
-          grid 
-          grid-cols-1 
-          md:grid-cols-2 
-          gap-3
-          max-h-[50vh]
-          overflow-y-auto
-        "
-      >
 
-              {categories.map((item) => (
-          <div key={item.label} className="col-span-1">
-            <CategoryInput
-              onClick={handleAmenityClick}
-              selected={selectedAmenities.includes(item.label)}
-              label={item.label}
-              icon={item.icon}
-            />
-          </div>
-        ))}
-
-
-
-      </div>
-    </div>
-  )
-
-
-  if (step === STEPS.PARCEL) {
-    bodyContent = (
-<div className="flex flex-col gap-1">
-  <Heading
-    title="Information Of Sending"
-    subtitle="Pick-up From"
-  />
-  <div className="flex flex-row gap-4">
-    <div className="w-full">
-      <Input
-        id="sender_name"
-        label="Name"
-        disabled={isLoading}
-        register={register}
-        errors={errors}
-        // required
-      />
-    </div>
+      <div className="flex flex-row gap-4">
+        <div className="w-full">
+          <Input
+              id="sender_name"
+              label="Name"
+              disabled={isLoading}
+              register={register}
+              errors={errors}
+          />
+        </div>
 
 
  
@@ -547,10 +580,67 @@ const handleRCountryChange = (value) => {
 
 
     );
-  }
+
+
+
+   if (step === STEPS.CATEGORY) {
+    bodyContent = (
+    <div className="flex flex-col gap-8">
+      <Heading
+        title="Ship"
+        subtitle="To Help You More Accurately, Please Answer the Following Questions."
+      />
+      <div 
+        className="
+          grid 
+          grid-cols-1 
+          md:grid-cols-2 
+          gap-3
+          max-h-[50vh]
+          overflow-y-auto
+        "
+      >
+
+              {categories.map((item) => (
+          <div key={item.label} className="col-span-1">
+            <CategoryInput
+              onClick={handleAmenityClick}
+              selected={selectedAmenities.includes(item.label)}
+              label={item.label}
+              icon={item.icon}
+            />
+          </div>
+        ))}
+
+
+
+      </div>
+    </div>
+  )
+
+}
 
   
 
+  if (step === STEPS.loading) {
+    bodyContent = (
+<div className="w-full h-full">
+     <img
+                  className="h-full w-full"
+                  style={{ objectFit: 'cover' }} 
+                  src="/images/anim.gif"
+                  alt="House" 
+                />
+ </div>
+
+
+  )
+
+
+
+
+
+}
  
 
   return (
@@ -562,7 +652,7 @@ const handleRCountryChange = (value) => {
        actionLabel={actionLabel}
       onSubmit={handleSubmit(onSubmit)}
        secondaryActionLabel={secondaryActionLabel}
-       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
+       secondaryAction={step === STEPS.PARCEL ? undefined : onBack}
       onClose={rentModal.onClose}
       body={bodyContent}
     />

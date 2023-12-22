@@ -3,11 +3,36 @@ import requests
 from api import db
 from api.models import *
 import json
+from collections import defaultdict
+
+
 
 listings = Blueprint('listings', __name__)
 
 
 from flask import request, jsonify
+
+
+
+@listings.route('/driver/geocode', methods=['POST'])
+def drivergeocode():
+
+    try:
+     
+        receiver_location = request.json['receiverLocation']
+
+        receiver_coordinates = get_coordinates(receiver_location)
+        print(receiver_location)
+        print(receiver_coordinates)
+        return jsonify({
+
+            'receiverCoordinates': receiver_coordinates
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 @listings.route('/geocode', methods=['POST'])
 def geocode():
@@ -18,12 +43,10 @@ def geocode():
         # Get the sender and receiver locations from the request
         sender_location = request.json['senderLocation']
         receiver_location = request.json['receiverLocation']
-        print(sender_location)
 
         # Make requests to Mapbox Geocoding API for sender and receiver locations
         sender_coordinates = get_coordinates(sender_location)
         receiver_coordinates = get_coordinates(receiver_location)
-
         return jsonify({
             'senderCoordinates': sender_coordinates,
             'receiverCoordinates': receiver_coordinates
@@ -47,6 +70,50 @@ def get_coordinates(location):
     except Exception as e:
         return None  # Handle the case where coordinates cannot be obtained
 
+
+
+@listings.route('/delivery/<int:shipment_id>/route', methods=['GET'])
+def delivery_route(shipment_id):
+    shipment = Delivery.query.filter_by(id=shipment_id).first()
+    if shipment:
+        shipment_data = shipment.serialize()
+        shipment_data['pickup_time'] = '04:00 pm'
+        print(shipment_data)
+
+       
+        return jsonify(shipment_data), 200
+    else:
+        return jsonify({'message': 'No shipments available'}), 404
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @listings.route('/shipment', methods=['POST'])
 def shipment():
     data = request.get_json()
@@ -55,20 +122,16 @@ def shipment():
         return jsonify({'msg': 'Missing JSON'}), 400
 
     try:
-        sender_county_dict = data.get('sender_county', {})
-        reciever_country_dict = data.get('reciever_country', {})
 
-        # Extract the 'label' from sender_county and reciever_country
-        sender_county_label = sender_county_dict.get('label', '')
-        reciever_country_label = reciever_country_dict.get('label', '')
+        allowed_keys = ['user_id','reciever_coordinates', 'sender_name', 'sender_contact', 'pickup_time', 'pickup_address', 'details',
+                        'parcel', 'sender_location', 'reciever_name', 'reciever_contact', 'reciever_email',
+                        'drop_address', 'quantity', 'weight', 'sender_coordinates', 'reciever_location']
 
-        # Save the labels to different fields in the data dictionary
-        data['sender_county'] = sender_county_label
-        data['reciever_country'] = reciever_country_label
+        # Create a new dictionary with only the allowed keys
+        filtered_data = {key: data[key] for key in allowed_keys if key in data}
 
-        print(data)
 
-        listing = Shipment(**data)
+        listing = Shipment(**filtered_data)
         db.session.add(listing)
         db.session.commit()
 
@@ -90,15 +153,17 @@ def shipment():
 
 @listings.route('/shipments/<int:user_id>', methods=['GET'])
 def get_shipments(user_id):
-    listings = Shipment.query.filter_by(user_id=user_id).all()
-    if listings:
-
-        serialized_listings = [listing.serialize() for listing in listings]
-        print(serialized_listings)
-        return jsonify(serialized_listings)
-    else:
-        return jsonify({'message': 'No listings available'}), 404
-
+    try:
+        listings = Shipment.query.filter_by(user_id=user_id).all()
+        if listings:
+            serialized_listings = [listing.serialize() for listing in listings]
+            print(serialized_listings)
+            return jsonify(serialized_listings)
+        else:
+            return jsonify({'message': 'No listings available for the user'}), 404
+    except Exception as e:
+        print(f'Error retrieving shipments: {e}')
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 @listings.route('/shipment/<int:id>', methods=['GET'])
@@ -206,3 +271,37 @@ def upload_images():
     db.session.commit()
 
     return jsonify({'message': 'Image Uploaded successfully'})
+
+
+
+@listings.route('/delivery/<int:driver_id>', methods=['GET'])
+def get_delivery(driver_id):
+
+    deliveries = Delivery.query.filter_by(driver_id=driver_id).all()
+    grouped = []
+
+    if listings:
+        for delivery in deliveries:
+            shipments = Shipment.query.filter_by(id=delivery.shipments_id).all()
+
+            for shipment in shipments:
+
+                grouped.append({
+                    "id": delivery.id,
+                    "task": delivery.task,
+                    "parcel": shipment.parcel,
+                    "sender_location": shipment.sender_location,
+                    "reciever_location": shipment.reciever_location,
+                    "sender_coordinates": shipment.sender_coordinates,
+                    "reciever_coordinates": shipment.reciever_coordinates,
+                    "description": delivery.description,
+                    "status": delivery.status,
+ 
+                })
+
+
+        return jsonify(grouped), 200
+    else:
+        return jsonify({'message': 'No shipments available'}), 404
+
+

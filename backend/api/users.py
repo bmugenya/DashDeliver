@@ -104,22 +104,31 @@ def get_drivers():
 
 
 @users.route('/accept_delivery/<int:shipments_id>/<int:driver_id>', methods=['POST'])
-def accept_delivery(shipments_id, driver_id):
+def add_delivery(shipments_id, driver_id):
     driver = User.query.get(driver_id)
     delivery = Shipment.query.get(shipments_id)
 
     if driver and delivery:
-        # Update the driver's status to "In Progress"
-        driver.status = 'In Progress'
-        delivery.status = 'Waiting Response'
 
-        # Assign the driver to the delivery (similar to the previous example)
-        delivery.assign_driver(driver)
+        data = {
+        'driver_id':driver_id,
+         'shipments_id':shipments_id
 
-        # Commit changes to the database
-        db.session.commit()
+        }
 
-        # Other logic for notifying users, updating delivery status, etc.
+        delivery = Delivery(**data)
+        db.session.add(delivery)
+
+        try:
+            db.session.commit()
+
+        except Exception as e:
+
+            error_message = f"An error occurred: {str(e)}"
+            print(error_message)
+   
+            return jsonify({'message': error_message}), 500
+
         return "Delivery accepted successfully"
     else:
         return "Invalid delivery or driver ID", 404        
@@ -127,3 +136,66 @@ def accept_delivery(shipments_id, driver_id):
 
 
 
+
+
+# Define the route for accepting a delivery
+@users.route('/delivery/status', methods=['POST'])
+def accept_delivery():
+    # Get data from the request
+    data = request.get_json()
+
+    # Extract driverId and status from the data
+    driver_id = data.get('driverId')
+    status = data.get('status')
+
+    # Perform the update in the database
+    delivery = Delivery.query.filter_by(id=driver_id).first()
+
+    if delivery:
+        # Update the status of the delivery
+        delivery.status = status
+        db.session.commit()
+
+        return jsonify({'message': f'Delivery {status} successfully'}), 200
+    else:
+        return jsonify({'error': 'No active delivery found for the specified driver'}), 404
+
+
+
+
+@users.route('/chat', methods=['POST'])
+def add_chat():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'msg': 'Missing JSON'}), 400
+        
+    chat = Chat(**data)
+    db.session.add(chat)
+
+    try:
+        db.session.commit()
+
+    except Exception as e:
+
+        error_message = f"An error occurred: {str(e)}"
+        print(error_message)
+   
+        return jsonify({'message': error_message}), 500
+
+    return "chat accepted successfully"
+
+
+
+
+
+
+@users.route('/chat/<int:id>/messages', methods=['GET'])
+def get_chat_messages(id):
+    chats = Chat.query.filter_by(deliverId=id).all()
+    result = []
+    if chats:
+        serialized_chats = [chat.serialize() for chat in chats]
+        return jsonify(serialized_chats)
+    else:
+        return jsonify(result), 404

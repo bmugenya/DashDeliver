@@ -5,7 +5,9 @@ import shipments from './features/listings/listingsSlice'
 import listing from './features/listing/listingSlice'
 import reservations from './features/reservation/reservationSlice'
 import trips from './features/trips/tripsSlice'
-import drivers from './features/favorites/favoritesSlice'
+import drivers from './features/driver/driverSlice'
+import delivery from './features/driver/driverSlice'
+
 
 const store = configureStore({
   reducer: {
@@ -14,6 +16,7 @@ const store = configureStore({
     shipments,
     listing,
     reservations,
+    delivery,
     trips,
     drivers
   },

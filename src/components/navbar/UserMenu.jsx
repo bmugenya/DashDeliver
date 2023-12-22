@@ -97,13 +97,20 @@ const registerModal = useRegisterModal();
             {currentUser ? (
               <>
         
+      {currentUser?.user_role === 'Driver' && (
+        <MenuItem 
+          label="Routes" 
+          onClick={() => navigate('/route')}
+        />
+      )}
+      {currentUser?.user_role !== 'Driver' && (
+        <>
+
 
      <MenuItem 
                   label="Orders" 
                    onClick={() => navigate('/orders')}
                 />
-
-
 
      <MenuItem 
                   label="Drivers" 
@@ -111,8 +118,6 @@ const registerModal = useRegisterModal();
                 />
 
 
- 
-        
   
                 <MenuItem 
                   label="Add a new Order" 
@@ -122,8 +127,10 @@ const registerModal = useRegisterModal();
                 <MenuItem 
                   label="Logout" 
                   // onClick={() => signOut()}
-                />
-              </>
+                 />
+        </>
+      )}
+    </>
             ) : (
               <>
                 <MenuItem 

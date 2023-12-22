@@ -1,22 +1,40 @@
 import {  useCallback, useState,useEffect } from "react";
 import FavoriteClient from "../components/listing/FavoritesClient";
 import { useDispatch, useSelector } from 'react-redux'
-
+import { getDriversAsync } from "../features/driver/driverActions";
 import EmptyState from "../components/EmptyState";
 import Button from "../components/Button";
 import { AiOutlinePlus } from "react-icons/ai";
 import useDriverModal from "../hooks/useDriverModal";
 import { BiCar } from "react-icons/bi";
+import ReactPaginate from 'react-paginate';
 
-function DriversPage({drivers}) {
+function DriversPage() {
 
 const dispatch = useDispatch();
 
 const { currentUser } = useSelector((state) => state.currentUser)
  const driverModal = useDriverModal();
- 
+ const { drivers } = useSelector((state) => state.drivers)
 
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10; // Set the number of items per page
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+  };
+
+  // Assuming `parcel` is an array of all your data
+  const slicedParcel = drivers?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
+  useEffect(() => {
+    
+    if (currentUser?.id) {
+
+      dispatch(getDriversAsync())
+    }
+  }, [dispatch, currentUser]);
 
 
   if (drivers?.length === 0) {
@@ -92,7 +110,7 @@ const { currentUser } = useSelector((state) => state.currentUser)
             </tr>
         </thead>
         <tbody>
-    {drivers?.map((row) => (
+    {slicedParcel?.map((row) => (
             <tr className="bg-white border-b ">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                     {row.name}
@@ -120,6 +138,20 @@ const { currentUser } = useSelector((state) => state.currentUser)
 
         </tbody>
     </table>
+
+         <ReactPaginate
+        previousLabel={'Previous'}
+        nextLabel={'Next'}
+        breakLabel={'...'}
+        breakClassName={'break-me'}
+        pageCount={Math.ceil(drivers?.length / itemsPerPage)}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageChange}
+        containerClassName={'pagination'}
+        subContainerClassName={'pages pagination'}
+        activeClassName={'active'}
+      />
 </div>
 
 </div>

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
-
+from sqlalchemy.dialects.postgresql import ARRAY
 class Updateable:
     def update(self, data):
         for attr, value in data.items():
@@ -204,12 +204,80 @@ class Reservation(db.Model,Updateable):
         }
 
 
+class Delivery(db.Model,Updateable):
+    __tablename__ = 'deliveries'
+
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String)
+    description = db.Column(db.String)
+
+    pickup_time =  db.Column(db.String)
+    drop_time = db.Column(db.String)
+    status = db.Column(db.String(20), default='In Progress')
+
+    driver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    shipments_id = db.Column(db.Integer, db.ForeignKey('shipments.id'))
+
+    shipments = db.relationship('Shipment', back_populates='deliveries')
+    chats = db.relationship('Chat', back_populates='deliveries')
+
+    def __repr__(self):
+        return '<Delivery {}>'.format(self.id)
+
+    @property
+    def url(self):
+        return url_for('deliveries.get', id=self.id)
+
+
+
+    def serialize(self):
+        return {
+            'id':self.id,
+            'task': self.task,
+            'description': self.description,
+            'pickup_time': self.pickup_time,
+            'drop_time':self.drop_time,
+            'status': self.status,
+            'shipments': self.shipments.serialize() if self.shipments else None
+
+
+        }
 
 
 
 
+class  Chat(db.Model,Updateable):
+    __tablename__ = 'chats'
+
+    id = db.Column(db.Integer, primary_key=True)
+    message =  db.Column(db.String)
+
+    email = db.Column(db.String(20))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    deliverId = db.Column(db.Integer, db.ForeignKey('deliveries.id'))
+
+    deliveries = db.relationship('Delivery', back_populates='chats')
 
 
+    def __repr__(self):
+        return '<Chat {}>'.format(self.id)
+
+    @property
+    def url(self):
+        return url_for('chats.get', id=self.id)
+
+
+
+    def serialize(self):
+        return {
+            'id':self.id,
+            'email': self.email,
+            'message': self.message,
+            'timestamp': self.timestamp,
+            'deliveries': self.deliveries.serialize() if self.deliveries else None
+
+
+        }
 
 
 
@@ -221,18 +289,17 @@ class Shipment(db.Model,Updateable):
     sender_contact = db.Column(db.String)
     pickup_time =  db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    sender_county = db.Column(db.String, nullable=False)
-    sender_province = db.Column(db.String, nullable=False)
+    sender_location = db.Column(db.String, nullable=False)
+    sender_coordinates = db.Column(ARRAY(db.Float), nullable=False)
     pickup_address = db.Column(db.String)
     details = db.Column(db.String)
-    reciever_ward = db.Column(db.String, nullable=False)
-    sender_ward = db.Column(db.String, nullable=False)
+
 
     reciever_name = db.Column(db.String)
     reciever_contact = db.Column(db.String)
     reciever_email = db.Column(db.String)
-    reciever_country =  db.Column(db.String, nullable=False)
-    reciever_province =  db.Column(db.String, nullable=False)
+    reciever_location =  db.Column(db.String, nullable=False)
+    reciever_coordinates =  db.Column(ARRAY(db.Float), nullable=False)
     drop_address = db.Column(db.String)
     status = db.Column(db.String(20), default='To be Picked-up')  # Possible statuses: 'Pending', 'In Progress', 'Delivered', etc.
     
@@ -242,15 +309,9 @@ class Shipment(db.Model,Updateable):
     weight = db.Column(db.String)
 
 
-    driver_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', back_populates='shipments')
-
-    
-    def assign_driver(self, driver):
-        self.driver = driver
-        self.status = 'In Progress'
-
+    deliveries = db.relationship('Delivery', back_populates='shipments')
 
 
 
@@ -271,16 +332,15 @@ class Shipment(db.Model,Updateable):
             'pickup_time': self.pickup_time,
             'parcel':self.parcel,
             'created_at':self.created_at,
-            'sender_county':self.sender_county,
-            'sender_province':self.sender_province,
-            'reciever_province':self.reciever_province,
-            'reciever_ward':self.reciever_ward,
-            'sender_ward':self.sender_ward,
+            'sender_location':self.sender_location,
+            'sender_coordinates':self.sender_coordinates,
+            'reciever_location':self.reciever_location,
+            'reciever_coordinates':self.reciever_coordinates,
             'pickup_address':self.pickup_address,
             'reciever_name':self.reciever_name,
             'reciever_contact':self.reciever_contact,
             'reciever_email':self.reciever_email,
-            'reciever_country':self.reciever_country,
+
             'user': self.user.serialize() if self.user else None 
 
         }

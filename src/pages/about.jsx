@@ -17,16 +17,14 @@ function ABoutPage() {
           <img
           src='/images/question.jpg'
         placeholder='blur'
-   
-      
-       
+
           className=" object-cover 
               h-full 
               w-full 
               group-hover:scale-110 
               transition"
         sizes='85vw'
-        priority
+       
         />
 
  

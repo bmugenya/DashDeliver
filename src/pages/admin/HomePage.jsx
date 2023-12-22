@@ -95,7 +95,7 @@ console.log(drivers)
   <ol className="m-8 mb-0 relative border-l border-gray-200 dark:border-gray-700">
     <li className="ml-6">
       <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"></span>
-      <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900"> {listing?.sender_county },  {listing?.sender_province}</h3>
+      <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900"> {listing?.sender_location}</h3>
             <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">{listing?.created_at}</time>
             <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{listing?.parcel}</p>
    
@@ -105,15 +105,15 @@ console.log(drivers)
   <ol className="m-8 mt-0 relative border-gray-200 dark:border-gray-700">
     <li className="ml-6">
       <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"></span>
-      <h3 className="mb-1 text-lg font-semibold text-gray-900"> {listing.reciever_country},  {listing.reciever_province}</h3>
+      <h3 className="mb-1 text-lg font-semibold text-gray-900"> {listing?.reciever_location}</h3>
        <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{listing?.status}</p>
     </li>
   </ol>
 </div>
 <div className="col-span-1 md:col-span-2">
 <Map
-  senderLocation={`Kenya, ${listing?.sender_county ?? 'Unknown County'}, ${listing?.sender_province ?? 'Unknown Province'}`}
-  receiverLocation={`Kenya, ${listing?.reciever_country ?? 'Unknown County'}, ${listing?.reciever_province ?? 'Unknown Province'}`}
+  senderCoordinates={listing?.sender_coordinates}
+  receiverCoordinates={listing?.reciever_coordinates}
   height={100}
 />
 </div>

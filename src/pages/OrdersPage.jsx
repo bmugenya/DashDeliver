@@ -50,7 +50,6 @@ const { drivers } = useSelector((state) => state.drivers)
   };
 
   // Assuming `parcel` is an array of all your data
-  const slicedParcel = shipments?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
 
 
 
@@ -71,6 +70,8 @@ const { drivers } = useSelector((state) => state.drivers)
         />
     );
   }
+  const slicedParcel = shipments ? shipments.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : [];
+
 
 
   return (
@@ -171,7 +172,7 @@ const { drivers } = useSelector((state) => state.drivers)
                 </td>
              
                       <td className="px-6 py-4">
-                    {row.reciever_country },  {row.reciever_province}
+                    {row.reciever_location}
                 </td>
 
                            <td className="px-6 py-4">
@@ -185,7 +186,7 @@ const { drivers } = useSelector((state) => state.drivers)
          
 
             <td className="px-6 py-4">
-                    {row.sender_county},  {row.sender_province}
+                    {row.sender_location}
                 </td>
             
            

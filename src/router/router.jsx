@@ -6,7 +6,7 @@ import Categories from  '../components/navbar/Categories'
 import LoginModal from  '../components/modals/LoginModal'
 import RegisterModal from '../components/modals/RegisterModal';
 import AssignModal from '../components/modals/AssignModal';
-import { getDriversAsync } from "../features/favorites/favoritesActions";
+import { getDriversAsync } from "../features/driver/driverActions";
 import RentModal from '../components/modals/RentModal';
 import DriverModal from '../components/modals/DriverModal';
 import ToasterProvider from '../providers/ToasterProvider';
@@ -18,8 +18,8 @@ import HomePage from "../pages/home";
 import AdminHomePage from "../pages/admin/HomePage";
 import DriversPage from "../pages/DriversPage";
 import TrackPage from "../pages/Track";
-
-
+import DetailsPage from "../pages/DetailsPage";
+import DeliveryPage from "../pages/DeliveryPage";
 import OrdersPage from "../pages/OrdersPage";
 import AboutPage from "../pages/about";
 import LoaderDel from "../components/LoaderDel";
@@ -69,9 +69,9 @@ const { drivers } = useSelector((state) => state.drivers)
    <div className="pb-20">
       <Routes>
       <Route path='/' element={ <><Navbar/><HomePage listings={shipments} isLoading={isLoading}/> </>} />
-
+      <Route path='/details/:id' element={ <><Navbar/><DetailsPage listings={shipments} isLoading={isLoading}/> </>} />
        <Route path='/listing/:id' element={ <><Navbar/><ListingPage /> </>} />
-   
+   <Route path='/route' element={ <><Navbar/><DeliveryPage /> </>} />
          <Route path='/dispatch/:id' element={ <><Navbar/><AdminHomePage drivers={drivers} /> </>} />
            
             <Route path='/drivers' element={ <><Navbar/><DriversPage drivers={drivers}/> </>} />
