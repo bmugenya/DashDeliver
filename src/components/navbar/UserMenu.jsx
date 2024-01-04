@@ -5,7 +5,8 @@ import useRegisterModal from "../../hooks/useRegisterModal";
 import { useCallback, useState } from "react";
 import useRentModal from "../../hooks/useRentModal";
 import MenuItem from "./MenuItem";
-
+import { updateUserLocation } from '../../features/user/userActions'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
 
 function UserMenu({currentUser}) {
@@ -14,7 +15,7 @@ function UserMenu({currentUser}) {
   const loginModal = useLoginModal();
 const registerModal = useRegisterModal();
   const rentModal = useRentModal();
-
+const dispatch = useDispatch()
    const [isOpen, setIsOpen] = useState(false);
     
     const toggleOpen = useCallback(() => {
@@ -30,6 +31,24 @@ const registerModal = useRegisterModal();
   }, [loginModal, rentModal, currentUser]);
 
  let navigate = useNavigate();
+
+
+
+      const updateLocation = () => {
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          dispatch(updateUserLocation({ latitude, longitude }));
+         
+        },
+        (error) => {
+          console.error('Error fetching user location:', error.message);
+        }
+      );
+  };
+  
 
 
 
@@ -98,10 +117,17 @@ const registerModal = useRegisterModal();
               <>
         
       {currentUser?.user_role === 'Driver' && (
+        <>
         <MenuItem 
           label="Routes" 
           onClick={() => navigate('/route')}
         />
+
+                <MenuItem 
+          label="Update Location" 
+          onClick={updateLocation}
+        />
+        </>
       )}
       {currentUser?.user_role !== 'Driver' && (
         <>
@@ -123,13 +149,14 @@ const registerModal = useRegisterModal();
                   label="Add a new Order" 
                   onClick={rentModal.onOpen}
                 />
-                <hr />
+   
+        </>
+      )}
+                   <hr />
                 <MenuItem 
                   label="Logout" 
                   // onClick={() => signOut()}
                  />
-        </>
-      )}
     </>
             ) : (
               <>

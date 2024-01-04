@@ -47,6 +47,13 @@ def geocode():
         # Make requests to Mapbox Geocoding API for sender and receiver locations
         sender_coordinates = get_coordinates(sender_location)
         receiver_coordinates = get_coordinates(receiver_location)
+
+        if not verify_coordinates(sender_coordinates, sender_location) or not verify_coordinates(receiver_coordinates, receiver_location):
+            # Retry geocoding if coordinates do not match provided locations
+            sender_coordinates = get_coordinates(sender_location)
+            receiver_coordinates = get_coordinates(receiver_location)
+
+
         return jsonify({
             'senderCoordinates': sender_coordinates,
             'receiverCoordinates': receiver_coordinates
@@ -71,6 +78,10 @@ def get_coordinates(location):
         return None  # Handle the case where coordinates cannot be obtained
 
 
+def verify_coordinates(coordinates, expected_location):
+    # Example implementation: Compare obtained coordinates with expected location
+    # For simplicity, this example checks if coordinates match exactly with the provided location
+    return coordinates is not None and coordinates == get_coordinates(expected_location)
 
 @listings.route('/delivery/<int:shipment_id>/route', methods=['GET'])
 def delivery_route(shipment_id):

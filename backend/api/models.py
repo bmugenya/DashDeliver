@@ -4,6 +4,8 @@ from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from hashlib import md5
 from sqlalchemy.dialects.postgresql import ARRAY
+
+
 class Updateable:
     def update(self, data):
         for attr, value in data.items():
@@ -214,6 +216,7 @@ class Delivery(db.Model,Updateable):
     pickup_time =  db.Column(db.String)
     drop_time = db.Column(db.String)
     status = db.Column(db.String(20), default='In Progress')
+    driver_coordinates =  db.Column(ARRAY(db.Float))
 
     driver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     shipments_id = db.Column(db.Integer, db.ForeignKey('shipments.id'))
@@ -235,6 +238,7 @@ class Delivery(db.Model,Updateable):
             'id':self.id,
             'task': self.task,
             'description': self.description,
+            'driver_coordinates': self.driver_coordinates,
             'pickup_time': self.pickup_time,
             'drop_time':self.drop_time,
             'status': self.status,
@@ -301,7 +305,7 @@ class Shipment(db.Model,Updateable):
     reciever_location =  db.Column(db.String, nullable=False)
     reciever_coordinates =  db.Column(ARRAY(db.Float), nullable=False)
     drop_address = db.Column(db.String)
-    status = db.Column(db.String(20), default='To be Picked-up')  # Possible statuses: 'Pending', 'In Progress', 'Delivered', etc.
+    status = db.Column(db.String(20), default='UNASSIGNED')  # 'UNASSIGNED, 'ASSIGNED', 'COMPLETED',
     
 
     parcel = db.Column(db.String)
@@ -310,9 +314,10 @@ class Shipment(db.Model,Updateable):
 
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    delivery_id = db.Column(db.Integer)
     user = db.relationship('User', back_populates='shipments')
     deliveries = db.relationship('Delivery', back_populates='shipments')
-
+  
 
 
     def __repr__(self):
@@ -340,7 +345,7 @@ class Shipment(db.Model,Updateable):
             'reciever_name':self.reciever_name,
             'reciever_contact':self.reciever_contact,
             'reciever_email':self.reciever_email,
-
+            'delivery_id':self.delivery_id,
             'user': self.user.serialize() if self.user else None 
 
         }

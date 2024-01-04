@@ -20,12 +20,13 @@ function OrdersPage() {
 const dispatch = useDispatch();
  const navigate = useNavigate();
 const { currentUser } = useSelector((state) => state.currentUser)
+ const [activeTab, setActiveTab] = useState('UNASSIGNED'); // Default active tab
 
 
   const rentModal = useRentModal();
 
 
-  console.log(currentUser?.id)
+ 
 
   const { shipments,isLoading } = useSelector((state) => state.shipments)
 const { drivers } = useSelector((state) => state.drivers)
@@ -44,6 +45,10 @@ const { drivers } = useSelector((state) => state.drivers)
 
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10; // Set the number of items per page
+  const navigateToViewPage = (id) => {
+    // Assuming you have a route like "/details/:id"
+    navigate(`/track/${id}`);
+  };
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
@@ -59,6 +64,16 @@ const { drivers } = useSelector((state) => state.drivers)
   };
 
 
+  if (isLoading) {
+    // Show Tailwind CSS loader while data is being fetched
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+      </div>
+    );
+  }
+
+
 
   if (shipments?.length === 0) {
     return (
@@ -70,7 +85,7 @@ const { drivers } = useSelector((state) => state.drivers)
         />
     );
   }
-  const slicedParcel = shipments ? shipments.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : [];
+  const slicedParcel = shipments ? shipments?.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage) : [];
 
 
 
@@ -89,7 +104,20 @@ const { drivers } = useSelector((state) => state.drivers)
 
 <h2 className="text-4xl font-semibold pb-5">Product and Service</h2>
 
-
+   <div className="flex space-x-4">
+          {/* Create tabs for different shipment statuses */}
+          {['UNASSIGNED', 'ASSIGNED',  'COMPLETED'].map((status) => (
+            <button
+              key={status}
+              className={`px-4 py-2 focus:outline-none ${
+                activeTab === status ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+              }`}
+              onClick={() => setActiveTab(status)}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
 
 <div className="bg-white shadow-md rounded-lg overflow-hidden">
 
@@ -147,11 +175,27 @@ const { drivers } = useSelector((state) => state.drivers)
         </thead>
        <tbody>
 
-    {slicedParcel?.map((row) => (
-      <tr className="bg-white border-b "
-      key={row.id}
-                  onClick={() => handleRowClick(row.id)}
-            style={{ cursor: 'pointer' }}>
+      {slicedParcel
+    .filter((row) => row.status === activeTab)
+    .map((row, index) => (
+      <tr
+        className="bg-white border-b"
+        key={row.id}
+        onClick={
+        row.status === 'UNASSIGNED'
+          ? () => handleRowClick(row.id)
+          : row.status === 'ASSIGNED'
+          ? () => navigateToViewPage(row.delivery_id)
+          : null
+      }
+      style={{
+        cursor:
+          (index === 0 && row.status === 'UNASSIGNED') || (row.status === 'ASSIGNED')
+            ? 'pointer'
+            : 'default',
+      }}
+    >
+    
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
                      KE020012488668
                 </th>
@@ -159,7 +203,8 @@ const { drivers } = useSelector((state) => state.drivers)
                       {row.parcel}
                 </td>
                 <td className="px-6 py-4">
-                   To be Picked-up
+                {row.status}
+                   
                 </td>
 
                        <td className="px-6 py-4">
@@ -230,7 +275,11 @@ const { drivers } = useSelector((state) => state.drivers)
 </div>
 
 
-
+   {isLoading && (
+          <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          </div>
+        )} 
 
 
 

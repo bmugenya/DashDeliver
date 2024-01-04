@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from "react-hot-toast";
 import { useCallback, useMemo } from "react";
 import { getCurrentUserAsync } from '../../features/user/userActions'
+import { updateUserLocation } from '../../features/user/userActions'
 import Modal from "./Modal";
 import Input from "../inputs/Input";
 import Heading from "../Heading";
@@ -18,6 +19,7 @@ function LoginModal() {
   const [open, setOpen] = useState(true)
   const [isLoading, setIsLoading] = useState(false);
   const { error } = useSelector((state) => state.user)
+   const { currentUser } = useSelector((state) => state.currentUser)
   const { register, handleSubmit } = useForm()
   const dispatch = useDispatch()
   const loginModal = useLoginModal();
@@ -26,11 +28,25 @@ function LoginModal() {
     const onSubmit = async (data) => {
     const auth = await dispatch(authUserAsync(data))
     const error = auth?.error?.message
-   
-    
+
     if(!error){
       toast.success('Logged in');
         dispatch(getCurrentUserAsync(auth?.payload?.user));
+
+            if (auth?.payload?.user?.user_role === 'Driver') {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          dispatch(updateUserLocation({ latitude, longitude }));
+          console.log('fetching user location:', latitude, longitude);
+        },
+        (error) => {
+          console.error('Error fetching user location:', error.message);
+        }
+      );
+    }
+
       loginModal.onClose();
 
     }else{

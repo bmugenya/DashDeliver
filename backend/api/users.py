@@ -75,7 +75,7 @@ def login():
 
     # User is authenticated, return success response
     token = create_auth_token(user.id)
-    return jsonify({'message': 'Login successful', 'user': user.id,'token': token}), 200
+    return jsonify({'message': 'Login successful', 'user': user.id,'user_role': user.user_role,'token': token}), 200
  
 
 
@@ -106,9 +106,9 @@ def get_drivers():
 @users.route('/accept_delivery/<int:shipments_id>/<int:driver_id>', methods=['POST'])
 def add_delivery(shipments_id, driver_id):
     driver = User.query.get(driver_id)
-    delivery = Shipment.query.get(shipments_id)
+    shipment = Shipment.query.get(shipments_id)
 
-    if driver and delivery:
+    if driver and shipment:
 
         data = {
         'driver_id':driver_id,
@@ -116,10 +116,18 @@ def add_delivery(shipments_id, driver_id):
 
         }
 
+
         delivery = Delivery(**data)
         db.session.add(delivery)
 
+        shipment.status = 'ASSIGNED'
+
+    
+
         try:
+            db.session.commit()
+            print(delivery.id)
+            shipment.delivery_id = delivery.id
             db.session.commit()
 
         except Exception as e:
@@ -138,6 +146,7 @@ def add_delivery(shipments_id, driver_id):
 
 
 
+
 # Define the route for accepting a delivery
 @users.route('/delivery/status', methods=['POST'])
 def accept_delivery():
@@ -147,6 +156,7 @@ def accept_delivery():
     # Extract driverId and status from the data
     driver_id = data.get('driverId')
     status = data.get('status')
+    driver_coordinates = data.get('location')
 
     # Perform the update in the database
     delivery = Delivery.query.filter_by(id=driver_id).first()
@@ -154,6 +164,7 @@ def accept_delivery():
     if delivery:
         # Update the status of the delivery
         delivery.status = status
+        delivery.driver_coordinates = driver_coordinates
         db.session.commit()
 
         return jsonify({'message': f'Delivery {status} successfully'}), 200

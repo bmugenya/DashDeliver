@@ -29,7 +29,7 @@ import {  useEffect } from "react";
 import { getRouteAsync } from "../features/driver/driverActions";
 import { BiCar } from "react-icons/bi";
 
-function DetailsPage({routes ,isLoading}) {
+function ClientPage({routes ,isLoading}) {
 const dispatch = useDispatch();
 let { id } = useParams()
  let navigate = useNavigate();
@@ -40,12 +40,12 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 const [currentLocation, setCurrentLocation] = useState(null);
 const [locationError, setLocationError] = useState(null);
 
-console.log(routes)
+
 
  const [receiverCountryLabel, setReceiverCountryLabel] = useState('');
   const [senderCountyLabel, setSenderCountyLabel] = useState('');
 const { drivers,route } = useSelector((state) => state.drivers)
-
+console.log(route)
 
   useEffect(() => {
     
@@ -121,7 +121,7 @@ const { drivers,route } = useSelector((state) => state.drivers)
 </div>
 <div className="col-span-1 md:col-span-2">
 <Map
-  senderCoordinates={location}
+  senderCoordinates={route?.driver_coordinates}
   receiverCoordinates={route?.shipments?.sender_coordinates}
   height={100}
 />
@@ -157,4 +157,4 @@ const { drivers,route } = useSelector((state) => state.drivers)
   )
 }
 
-export default DetailsPage
+export default ClientPage

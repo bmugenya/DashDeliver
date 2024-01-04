@@ -67,12 +67,12 @@ Dash Delivery is committed to minimizing its environmental footprint. We optimiz
 
 Getting started with Dash Delivery is a breeze:
 
-<ul class="text-sm font-medium">
-    <li class="w-full px-4 py-2 rounded-t-lg ">1. Create an Account: Sign up on our user-friendly platform or download our mobile app.</li>
-    <li class="w-full px-4 py-2 ">2. Place Your Order Tell us what you need, where it needs to go, and when you need it there.</li>
-    <li class="w-full px-4 py-2 ">3. Track Your Errand Keep an eye on the progress of your errand in real-time.</li>
-    <li class="w-full px-4 py-2 rounded-b-lg">4. Delivery Relax as our reliable team takes care of your errand promptly.</li>
-     <li class="w-full px-4 py-2 rounded-b-lg">5. Payment Conveniently pay for our services through our secure payment options.</li>
+<ul className="text-sm font-medium">
+    <li className="w-full px-4 py-2 rounded-t-lg ">1. Create an Account: Sign up on our user-friendly platform or download our mobile app.</li>
+    <li className="w-full px-4 py-2 ">2. Place Your Order Tell us what you need, where it needs to go, and when you need it there.</li>
+    <li className="w-full px-4 py-2 ">3. Track Your Errand Keep an eye on the progress of your errand in real-time.</li>
+    <li className="w-full px-4 py-2 rounded-b-lg">4. Delivery Relax as our reliable team takes care of your errand promptly.</li>
+     <li className="w-full px-4 py-2 rounded-b-lg">5. Payment Conveniently pay for our services through our secure payment options.</li>
 </ul>
 
 

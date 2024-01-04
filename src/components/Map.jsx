@@ -6,13 +6,16 @@ import { url } from "../utils/url";
 function Map({ senderCoordinates, receiverCoordinates, height }) {
   const [map, setMap] = useState(null);
 
-
+console.log(senderCoordinates)
 
   useEffect(() => {
     const loadMap = async () => {
       try {
         
-  console.log(senderCoordinates,receiverCoordinates)
+    if (!senderCoordinates || !receiverCoordinates) {
+          console.error('Invalid coordinates provided');
+          return;
+        }
         const midpoint = [
           (senderCoordinates[0] + receiverCoordinates[0]) / 2,
           (senderCoordinates[1] + receiverCoordinates[1]) / 2,

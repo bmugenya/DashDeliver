@@ -21,7 +21,7 @@ const dispatch = useDispatch();
 const { currentUser } = useSelector((state) => state.currentUser)
  const driverModal = useDriverModal();
  const { delivery } = useSelector((state) => state.delivery)
-
+const { location } = useSelector((state) => state.user)
 let navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10; // Set the number of items per page
@@ -47,13 +47,13 @@ console.log(delivery)
 
 
 
-const acceptSubmit = async (driverId, status) => {
+const acceptSubmit = async (driverId, status, location) => {
 
 
 
     try {
       // Send a POST request to your Flask route with the selected driver's ID and status
-      await axios.post(`${url}/delivery/status`, { driverId, status });
+      await axios.post(`${url}/delivery/status`, { driverId, status, location });
 
       // Assuming a successful response, you can handle further actions (e.g., displaying a success message)
       toast.success(`Delivery ${status === 'accepted' ? 'accepted' : 'declined'} successfully`);
@@ -66,7 +66,7 @@ const acceptSubmit = async (driverId, status) => {
 
   const handleAccept = (driverId) => {
     // Call acceptSubmit with the appropriate status (e.g., 'accepted')
-    acceptSubmit(driverId, 'accepted');
+    acceptSubmit(driverId, 'accepted', location);
   };
 
   const handleDecline = (driverId) => {

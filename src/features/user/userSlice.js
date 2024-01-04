@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { authUserAsync, getCurrentUserAsync } from './userActions'
+import { authUserAsync, getCurrentUserAsync, updateUserLocation } from './userActions'
 
 const initialState = {
     error: null,
     user:null,
     currentUser:null,
     isLoading: false,
+    location: [],
 };
 
 const userSlice = createSlice({
@@ -14,6 +15,12 @@ const userSlice = createSlice({
     reducers: {},
         extraReducers: (builder) => {
         builder
+            .addCase(updateUserLocation.fulfilled, (state, { payload }) => {
+                state.location =  Object.values(payload);
+            })
+
+
+
             .addCase(authUserAsync.pending, (state) => {
                 state.isLoading = 'true';
             })

@@ -10,7 +10,7 @@ import { getDriversAsync } from "../features/driver/driverActions";
 import RentModal from '../components/modals/RentModal';
 import DriverModal from '../components/modals/DriverModal';
 import ToasterProvider from '../providers/ToasterProvider';
-
+import NotFound from "../pages/NotFound";
 import SearchModal from '../components/modals/SearchModal';
 import ImageModal from '../components/modals/ImageModal';
 import ListingPage from "../pages/listing";
@@ -19,6 +19,7 @@ import AdminHomePage from "../pages/admin/HomePage";
 import DriversPage from "../pages/DriversPage";
 import TrackPage from "../pages/Track";
 import DetailsPage from "../pages/DetailsPage";
+import ClientPage from "../pages/ClientPage";
 import DeliveryPage from "../pages/DeliveryPage";
 import OrdersPage from "../pages/OrdersPage";
 import AboutPage from "../pages/about";
@@ -41,6 +42,8 @@ const { user } = useAuthListener()
 const dispatch = useDispatch();
 const { shipments,isLoading } = useSelector((state) => state.shipments)
 const { drivers } = useSelector((state) => state.drivers)
+ const { location } = useSelector((state) => state.location)
+
 
 
   useEffect(() => {
@@ -70,6 +73,7 @@ const { drivers } = useSelector((state) => state.drivers)
       <Routes>
       <Route path='/' element={ <><Navbar/><HomePage listings={shipments} isLoading={isLoading}/> </>} />
       <Route path='/details/:id' element={ <><Navbar/><DetailsPage listings={shipments} isLoading={isLoading}/> </>} />
+       <Route path='/track/:id' element={ <><Navbar/><ClientPage listings={shipments} isLoading={isLoading}/> </>} />
        <Route path='/listing/:id' element={ <><Navbar/><ListingPage /> </>} />
    <Route path='/route' element={ <><Navbar/><DeliveryPage /> </>} />
          <Route path='/dispatch/:id' element={ <><Navbar/><AdminHomePage drivers={drivers} /> </>} />
@@ -79,6 +83,7 @@ const { drivers } = useSelector((state) => state.drivers)
        <Route path='/track' element={ <><Navbar/><TrackPage /> </>}  />
        <Route path='/loader' element={ <><Navbar/><LoaderDel /> </>}  />
         <Route path='/about' element={ <><Navbar/><AboutPage /> </>} />
+        <Route path="*" element={<NotFound />} />
 
         </Routes>
         </div>

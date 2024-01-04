@@ -3,6 +3,20 @@ import { authUser, getCurrentUser } from './userApi'
 import Cookies from 'js-cookie'
 
 
+
+
+
+
+export const updateUserLocation = createAsyncThunk(
+    '/UPDATE_LOCATION',
+    async ({  latitude, longitude }, {rejectWithValue }) => {
+    
+        return  {longitude,latitude };
+    }
+);
+
+
+
 export const authUserAsync = createAsyncThunk(
     '/login',
     async ({ email, password }, {rejectWithValue }) => {

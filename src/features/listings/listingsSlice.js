@@ -15,14 +15,14 @@ const listingsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getShipmentsAsync.pending, (state) => {
-                state.isLoading = 'true';
+                state.isLoading = true;
             })
             .addCase(getShipmentsAsync.fulfilled, (state, { payload }) => {
-                state.isLoading = 'false';
-                state.shipments = payload
+                state.isLoading = false;
+                state.shipments =  Array.isArray(payload) ? payload : [];
             })
             .addCase(getShipmentsAsync.rejected, (state, { payload }) => {
-                state.isLoading = 'false';
+                state.isLoading = false;
                 state.error = payload;
             });
     },
