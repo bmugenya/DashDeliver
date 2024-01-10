@@ -6,7 +6,7 @@ import { url } from "../utils/url";
 function Map({ senderCoordinates, receiverCoordinates, height }) {
   const [map, setMap] = useState(null);
 
-console.log(senderCoordinates)
+
 
   useEffect(() => {
     const loadMap = async () => {

@@ -34,6 +34,32 @@ def drivergeocode():
 
 
 
+@listings.route('/single/geocode', methods=['POST'])
+def singleGeocode():
+
+    try:
+
+        location = request.json['location']
+
+        location = get_coordinates(location)
+        print(location)
+
+
+        return jsonify({
+            'location': location,
+
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
+
+
+
 @listings.route('/geocode', methods=['POST'])
 def geocode():
 

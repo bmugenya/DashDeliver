@@ -3,16 +3,19 @@ import { categories } from '../components/navbar/Categories';
 import { useNavigate } from "react-router-dom";
 import ListingCard from "../components/listing/ListingCard";
 import { useDispatch, useSelector } from 'react-redux'
-
+import Button from "../components/Button";
 import Loader from "../components/Loader"
 import AssignModal from "../components/modals/AssignModal"
-
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css'; // Import the styles
+import { BiCheck } from "react-icons/bi";
+import CameraSharing from '../components/CameraSharing';
 import Chat from "../components/Chat"
 import Search from "../components/navbar/Search";
 import Mark from "../components/Mark";
 import EmptyState from "../components/EmptyState";
 import { AiOutlinePlus } from "react-icons/ai";
-import Button from "../components/Button";
+
 import Heading from "../components/Heading";
 import useAssignModal from "../hooks/useAssignModal"
 import useRentModal from "../hooks/useRentModal";
@@ -40,7 +43,10 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 const [currentLocation, setCurrentLocation] = useState(null);
 const [locationError, setLocationError] = useState(null);
 
-console.log(routes)
+  const tabs = [
+    { id: 'chat', label: 'Chat' },
+    { id: 'camera', label: 'Camera Sharing' },
+  ];
 
  const [receiverCountryLabel, setReceiverCountryLabel] = useState('');
   const [senderCountyLabel, setSenderCountyLabel] = useState('');
@@ -54,6 +60,7 @@ const { drivers,route } = useSelector((state) => state.drivers)
 
     }
   }, [dispatch, id]);
+
 
 
 
@@ -118,7 +125,54 @@ const { drivers,route } = useSelector((state) => state.drivers)
     </li>
   </ol>
 
+
+          <Button
+            outline
+
+            label="mark complete"
+              icon={BiCheck}
+       
+          />
+
+
+
+  <ol className="m-8 mb-0 relative ">
+    <li className="ml-6">
+      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"></span>
+      <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900"> {route?.shipments?.sender_location}</h3>
+            <time className="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+            {route?.shipments?.created_at}</time>
+            <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{route?.shipments?.parcel}</p>
+   
+   
+    </li>
+  </ol>
+
+
+
+  <ol className="m-8 mb-0 relative ">
+    <li className="ml-6">
+      <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900"></span>
+      <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900"> {route?.shipments?.reciever_location}</h3>
+        
+            <p className="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">{route?.shipments?.parcel}</p>
+   
+   
+    </li>
+  </ol>
+          <Button
+            outline
+
+            label="mark complete"
+              icon={BiCheck}
+       
+          />
 </div>
+
+
+
+
+
 <div className="col-span-1 md:col-span-2">
 <Map
   senderCoordinates={location}
@@ -126,24 +180,30 @@ const { drivers,route } = useSelector((state) => state.drivers)
   height={100}
 />
 </div>
-<div className="rounded-sm col-span-1 md:col-span-1">
 
-   <Chat currentUser={currentUser}  sender={route?.shipments?.sender_name}/>
+   
+        <div className="rounded-sm col-span-1 md:col-span-1">
+
+
+           <Tabs>
+      <TabList>
+        <Tab>Chat</Tab>
+        <Tab>Camera Sharing</Tab>
+      </TabList>
+
+      <TabPanel>
+       <Chat currentUser={currentUser} sender={route?.shipments?.sender_name} />
+      </TabPanel>
+      <TabPanel>
+        <CameraSharing />
+      </TabPanel>
+    </Tabs>
 
  
-
-</div>
-
-              
-   
-    
-
-
-       
  </div>
 
 
-
+</div>
 
 
 

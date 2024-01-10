@@ -125,15 +125,11 @@ const { drivers } = useSelector((state) => state.drivers)
     <table className="w-full text-sm text-left  dark:text-gray-400">
        <thead className="text-xs text-gray-700 uppercase bg-gray-50  ">
             <tr>
-                <th scope="col" className="px-6 py-3">
-                    Order Number
-                </th>
+
                 <th scope="col" className="px-6 py-3">
                     Parcel 
                 </th>
-                <th scope="col" className="px-6 py-3">
-                     Status
-                </th>
+        
          
                     <th scope="col" className="px-6 py-3">
                    Receiver Name
@@ -165,12 +161,7 @@ const { drivers } = useSelector((state) => state.drivers)
 
 
 
-                    <th scope="col" className="px-6 py-3">
-                 Order Date
-                </th>
-                    <th scope="col" className="px-6 py-3">
-                 Operation
-                </th>
+           
             </tr>
         </thead>
        <tbody>
@@ -196,16 +187,11 @@ const { drivers } = useSelector((state) => state.drivers)
       }}
     >
     
-                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                     KE020012488668
-                </th>
+      
                 <td className="px-6 py-4">
                       {row.parcel}
                 </td>
-                <td className="px-6 py-4">
-                {row.status}
-                   
-                </td>
+        
 
                        <td className="px-6 py-4">
                       {row.reciever_name}
@@ -235,18 +221,8 @@ const { drivers } = useSelector((state) => state.drivers)
                 </td>
             
            
-                <td className="px-6 py-4">
-                    {row.created_at}
-                </td>
-                 <td className="px-6 py-4">
-
-
-                        <BiSolidTrashAlt
-          size={24}
-           style={{ color: 'red' }}
-      
-        />
-                </td>
+       
+               
             </tr>
            
 

@@ -41,3 +41,34 @@
 }
 
 
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.tab {
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+  background-color: #f0f0f0;
+  user-select: none;
+}
+
+.tab.active {
+  background-color: #fff;
+}
+
+.tab-content-item {
+  display: none;
+}
+
+.tab-content-item.active {
+  display: block;
+}

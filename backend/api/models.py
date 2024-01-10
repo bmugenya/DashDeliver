@@ -217,7 +217,7 @@ class Delivery(db.Model,Updateable):
     drop_time = db.Column(db.String)
     status = db.Column(db.String(20), default='In Progress')
     driver_coordinates =  db.Column(ARRAY(db.Float))
-
+    stage = db.Column(db.Integer)
     driver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     shipments_id = db.Column(db.Integer, db.ForeignKey('shipments.id'))
 
