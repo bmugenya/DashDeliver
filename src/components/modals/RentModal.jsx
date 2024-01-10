@@ -174,8 +174,6 @@ const onNext = async () => {
 
 
 
-   {senderCordinates.length > 0 && recieverCordinates.length > 0 && (
-
     axios.post(`${url}/shipment`, data)
       .then(() => {
         toast.success('Shipment created!');
@@ -189,7 +187,7 @@ const onNext = async () => {
          dispatch(getShipmentsAsync(data.user_id))
         setIsLoading(false);
       })
-   )}  
+   
   }
 
   
